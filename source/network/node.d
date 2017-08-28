@@ -30,7 +30,7 @@ enum snapshotCatchUpEntriesN = 10000;
 
 
 
-class node : Timer
+class node 
 {
 	__gshared node _gnode;
 
@@ -278,7 +278,7 @@ class node : Timer
 		}
 		_poll.addFunc(&ready);
 
-		_poll.addTimer(this , 100 , WheelType.WHEEL_PERIODIC);
+		_poll.addTimer(&onTimer , 100 , WheelType.WHEEL_PERIODIC);
 
 		_poll.start();
 
@@ -324,10 +324,9 @@ class node : Timer
 		_node.Step(msg);
 	}
 
-	bool onTimer(TimerFd fd , ulong ticks)
+	void onTimer(TimerFd fd , ulong ticks)
 	{
 		_node.Tick();
-		return true;
 	}
 
 	void ready()
