@@ -324,7 +324,7 @@ class node
 		_node.Step(msg);
 	}
 
-	void onTimer(TimerFd fd , ulong ticks)
+	void onTimer(TimerFd fd )
 	{
 		_node.Tick();
 	}
