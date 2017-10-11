@@ -39,12 +39,13 @@ class base : AsyncTcpBase
 				auto left = length - pos;
 				if(left + _cur_header_len < PACK_HEAD_LEN)
 				{
-					_header[_cur_header_len .. left + _cur_header_len] = data[0 .. left];
+					_header[_cur_header_len .. left + _cur_header_len] = data[pos .. pos + left];
+					_cur_header_len += left;
 					return true;
 				}
 				else
 				{
-					_header[_cur_header_len .. PACK_HEAD_LEN] = data[0 .. PACK_HEAD_LEN - _cur_header_len];
+					_header[_cur_header_len .. PACK_HEAD_LEN] = data[pos .. pos + PACK_HEAD_LEN - _cur_header_len];
 					pos += PACK_HEAD_LEN - _cur_header_len;
 					memcpy(&_packLen , _header.ptr , PACK_HEAD_LEN);
 				}
