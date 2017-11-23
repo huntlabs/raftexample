@@ -120,12 +120,6 @@ class http : AsyncTcpBase
 			}
 		}
 
-		if(!node.instance()._node.isLeader())
-		{
-			return do_response("not a leader");
-		}
-
-
 		if(path == "/get")
 		{
 			auto key = "key" in params;
@@ -199,6 +193,13 @@ class http : AsyncTcpBase
 
 		return true;
 	}
+
+	override  bool onClose() {
+
+		node.instance().delPropose(this);
+		return super.onClose();
+	}
+
 
 	private byte[] _buffer;
 }

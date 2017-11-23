@@ -25,7 +25,7 @@ import network.http;
 import std.conv;
 
 
-enum defaultSnapCount = 10;
+enum defaultSnapCount = 10000;
 enum snapshotCatchUpEntriesN = 10000;
 
 
@@ -95,17 +95,14 @@ class node
 						value = _kvs.Lookup(command.Key);
 					else
 						_kvs.SetValue(command.Key , command.Value);
-
-					//if leader
-					if(_node.isLeader())
+						
+					auto http = (command.Hash in _request);
+					if(http != null)
 					{
-						auto http = (command.Hash in _request);
-						if(http != null)
-						{
-							http.do_response(value ~ " action done");
-							http.close();
-						}
+						http.do_response(value ~ " action done");
+						http.close();
 					}
+
 
 
 					break;
@@ -186,6 +183,11 @@ class node
 		}
 	}
 
+	void delPropose(http h)
+	{
+		_request.remove(h.toHash);
+	}
+
 	void ProposeConfChange(ConfChange cc)
 	{
 		auto err = _node.ProposeConfChange(cc);
@@ -255,6 +257,7 @@ class node
 			}
 
 			_node = new RawNode(conf , peers);
+			log_info(_ID , " " , peers);
 		}
 
 		_http = new AsyncTcpServer!(http , byte[])(_poll , _buffer);
