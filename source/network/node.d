@@ -183,6 +183,12 @@ class node
 		}
 	}
 
+	void ReadIndex(RequestCommand command , http h)
+	{
+		_node.ReadIndex(cast(string)serialize(command));
+		_request[command.Hash] = h;
+	}
+
 	void delPropose(http h)
 	{
 		_request.remove(h.toHash);
@@ -353,6 +359,27 @@ class node
 			_poll.stop();
 			return;
 		}
+
+		//for readindex
+		foreach( r ; rd.ReadStates)
+		{
+			if( r.Index >= _appliedIndex)
+			{
+				RequestCommand command =  deserialize!RequestCommand(cast(byte[])r.RequestCtx);
+				auto h =  command.Hash in _request;
+				if(h == null){
+					continue;
+				}
+				string value;
+				if(command.Method == RequestMethod.METHOD_GET)
+				{	
+					value = _kvs.Lookup(command.Key);
+					h.do_response(value ~ "action done");
+					h.close();
+				}
+			}
+		}
+		
 		maybeTriggerSnapshot();
 		_node.Advance(rd);
 

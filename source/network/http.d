@@ -127,7 +127,7 @@ class http : AsyncTcpBase
 				return do_response("params key must not empty");
 
 			RequestCommand command = { Method:RequestMethod.METHOD_GET , Key: *key , Hash:this.toHash()};
-			node.instance().Propose(command , this);
+			node.instance().ReadIndex(command , this);
 			return true;
 		}
 		else if(path == "/set")
