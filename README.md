@@ -36,4 +36,6 @@ http://127.0.0.1:2110/add?ID=4&Context=127.0.0.1:1113
 
 http://127.0.0.1:2110/del?ID=4
 
+#Tips
+new version @https://github.com/huntlabs/hunt-raft/tree/master/examples/raftexample
 
